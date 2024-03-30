@@ -8,25 +8,24 @@ def file_pointer(filename):
     if os.path.isfile(filename):
         return open(filename, encoding="utf-8")
     else:
-        sys.exit("File not found. Please give correct filename!")
+        sys.exit(f"{filename} not found. Please give correct filename!")
 
 
 # Returns the number of bytes in the file
-def number_of_bytes(filename):
-    cursor = file_pointer(filename)
+def number_of_bytes(cursor):
     cursor.seek(0, 2)
     return cursor.tell()
 
 
 # Return the number of lines in the file
-def number_of_lines(filename):
-    cursor = file_pointer(filename)
+def number_of_lines(cursor):
+    cursor.seek(0)
     return sum(1 for _ in cursor)
 
 
 # Returns the number of characters in the file
-def number_of_characters(filename):
-    cursor = file_pointer(filename)
+def number_of_characters(cursor):
+    cursor.seek(0)
     characterCount = 0
     for line in cursor:
         characterCount += len(line.strip())
@@ -34,8 +33,8 @@ def number_of_characters(filename):
 
 
 # Returns the number of words in the file
-def number_of_words(filename):
-    cursor = file_pointer(filename)
+def number_of_words(cursor):
+    cursor.seek(0)
     wordcounter = 0
     for line in cursor:
         wordcounter += sum(1 for _ in line.split())
@@ -59,15 +58,15 @@ parser.add_argument("-b", "--bytes", action='store_true', help="Number of bytes 
 # Main function
 if __name__ == '__main__':
     args = parser.parse_args()
-    file = args.filename
+    filePointer = file_pointer(args.filename)
     if args.lines:
-        print(number_of_lines(file))
+        print(number_of_lines(filePointer))
     elif args.words:
-        print(number_of_words(file))
+        print(number_of_words(filePointer))
     elif args.characters:
-        print(number_of_characters(file))
+        print(number_of_characters(filePointer))
     elif args.bytes:
-        print(number_of_bytes(file))
+        print(number_of_bytes(filePointer))
     else:
-        print("Lines: ", number_of_lines(file), "Words: ", number_of_words(file), "Characters: ",
-              number_of_characters(file), "Bytes: ", number_of_bytes(file))
+        print("Lines: ", number_of_lines(filePointer), "Words: ", number_of_words(filePointer), "Characters: ",
+              number_of_characters(filePointer), "Bytes: ", number_of_bytes(filePointer))
