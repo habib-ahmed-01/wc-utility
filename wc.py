@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+import io
 
 
 # Return File Pointer to be used by other functions
@@ -48,17 +49,20 @@ parser = argparse.ArgumentParser(
 )
 
 # Defining Flags and Arguments
-parser.add_argument('filename', help="Name of the file")
+parser.add_argument('filename', nargs='?', help="Name of the file")
 parser.add_argument("-l", "--lines", action='store_true', help="Number of lines in the file")
 parser.add_argument("-w", "--words", action='store_true', help="Number of words in the file")
 parser.add_argument("-c", "--characters", action='store_true', help="Number of characters in the file")
 parser.add_argument("-b", "--bytes", action='store_true', help="Number of bytes in the file")
 
-
 # Main function
 if __name__ == '__main__':
     args = parser.parse_args()
-    filePointer = file_pointer(args.filename)
+    if args.filename:
+        filePointer = file_pointer(args.filename)
+    else:
+        filePointer = io.TextIOWrapper(sys.stdin.buffer, encoding='utf-8')
+
     if args.lines:
         print(number_of_lines(filePointer))
     elif args.words:
@@ -67,6 +71,12 @@ if __name__ == '__main__':
         print(number_of_characters(filePointer))
     elif args.bytes:
         print(number_of_bytes(filePointer))
-    else:
+    elif args.filename:
         print("Lines: ", number_of_lines(filePointer), "Words: ", number_of_words(filePointer), "Characters: ",
               number_of_characters(filePointer), "Bytes: ", number_of_bytes(filePointer))
+    else:
+        parser.print_help()
+        sys.exit(0)
+
+    if args.filename:
+        filePointer.close()
